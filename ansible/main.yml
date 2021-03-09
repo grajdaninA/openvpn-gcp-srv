@@ -4,14 +4,14 @@
   become: yes
   vars:
     ubuntu_pkgs:
+      - 'python3'
+      - 'python3-pip'
       - 'apt-transport-https'
       - 'ca-certificates'
       - 'curl'
       - 'gnupg2'
       - 'software-properties-common'
 
-    repo_gpg_key_link:
-      - 'https://download.docker.com/linux/debian/gpg'
   tasks:
     - name: install dependancies pks
       apt:
@@ -21,13 +21,19 @@
 
     - name: Add Docker GPG apt Key
       apt_key:
-        url: "{{ repo_gpg_key_link }}"
+        url: "http://download.docker.com/linux/{{ ansible_facts.distribution | lower }}/gpg"
         state: present
 
     - name: Add Docker Repository
       apt_repository:
-        repo: deb https://download.docker.com/linux/debian buster stable
+        repo: "deb https://download.docker.com/linux/{{ ansible_facts.distribution | lower }} {{ ansible_facts.distribution_release }} stable"
         state: present
+
+    - name: install docker SDK with Python3
+      pip:
+        name: docker
+        state: present
+        executable: pip3
 
     - name: Update apt and install docker-ce
       apt:
@@ -35,6 +41,18 @@
         state: latest
         update_cache: yes
       notify: "start docker"
+
+    - name: Run Docker-OpenVPN
+      docker_container:
+        name: dockovpn
+        image: alekslitvinenk/openvpn
+        state: started
+        ports:
+          - "80:8080/tcp"
+          - "1194:1194/udp"
+        capabilities: "NET_ADMIN"
+        env:
+          HOST_ADDR: "{{ hostvars[inventory_hostname].ansible_host }}"
 
   handlers:
     - name: start docker

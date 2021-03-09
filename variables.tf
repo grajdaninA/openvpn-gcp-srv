@@ -59,21 +59,44 @@ variable "gcp_network" {
   default = "default"
 }
 
-variable "gcp_firewall_rule_name" {
+variable "gcp_firewall_vpn_rule_name" {
   type = string
-  description = "The GCP VPC network firewall rule name"
+  description = "The GCP VPC network firewall rule name for vpn"
 }
 
-variable "firewall_protocol" {
+variable "gcp_firewall_http_rule_name" {
   type = string
-  description = "The firewall rule protocol"
+  description = "The GCP VPC network firewall rule name for http"
+}
+
+variable "firewall_vpn_protocol" {
+  type = string
+  description = "The firewall rule protocol for vpn"
   default = "udp"
 }
 
-variable "firewall_ports" {
+variable "firewall_http_protocol" {
+  type = string
+  description = "The firewall rule protocol for vpn"
+  default = "tcp"
+}
+
+variable "firewall_vpn_ports" {
   type = list(string)
   description = "The list of ports to access"
   default = ["1194"]
+}
+
+variable "firewall_http_ports" {
+  type = list(string)
+  description = "The list of ports to access"
+  default = ["80"]
+}
+
+variable "firewall_source_range" {
+  type = list(string)
+  description = "The range of source CIDR. Default value allows connections from all ips"
+  default = ["0.0.0.0/0"]
 }
 
 variable "firewall_rule_source_tags" {
@@ -112,4 +135,9 @@ variable "path_to_ansible_dir" {
   default = "ansible"
 }
 
+variable "time_sleep" {
+  type = string
+  description = "The time to seep before provisioning"
+  default = "30s"
+}
 

@@ -20,7 +20,6 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   network_interface {
-    # A default network is created for all GCP projects
     network = data.google_compute_network.default.name
     access_config {
     }
@@ -34,13 +33,30 @@ resource "google_compute_instance" "vm_instance" {
 }
 
 resource "google_compute_firewall" "vpn" {
-  name    = var.gcp_firewall_rule_name
+  name    = var.gcp_firewall_vpn_rule_name
   network = data.google_compute_network.default.name
 
   allow {
-    protocol = var.firewall_protocol
-    ports    = var.firewall_ports
+    protocol = var.firewall_vpn_protocol
+    ports    = var.firewall_vpn_ports
   }
+
+  source_ranges = var.firewall_source_range
+
+  source_tags = var.firewall_rule_source_tags
+  target_tags = [var.tags[1]]
+}
+
+resource "google_compute_firewall" "http" {
+  name    = var.gcp_firewall_http_rule_name
+  network = data.google_compute_network.default.name
+
+  allow {
+    protocol = var.firewall_http_protocol
+    ports    = var.firewall_http_ports
+  }
+
+  source_ranges = var.firewall_source_range
 
   source_tags = var.firewall_rule_source_tags
   target_tags = [var.tags[1]]
@@ -49,7 +65,7 @@ resource "google_compute_firewall" "vpn" {
 resource "local_file" "output_inventory" {
   content     =  templatefile("${var.templates_path}/${var.inventory_tpl}",
     {
-      group = "proxy"
+      group = var.tags[0]
       host = var.gcp_instance_name
       user   = var.gcp_instance_user
       ip    = google_compute_instance.vm_instance.network_interface[0].access_config[0].nat_ip
@@ -60,10 +76,20 @@ resource "local_file" "output_inventory" {
   file_permission = var.inv_permissions
 }
 
+
+resource "time_sleep" "wait" {
+  depends_on = [local_file.output_inventory]
+  create_duration = var.time_sleep
+}
+
 resource "null_resource" "ansible" {
   provisioner "local-exec" {
     command = "ansible-playbook ${var.path_to_ansible_dir}/main.yml -i ${var.path_to_ansible_dir}/${var.output_inv_file_name}"
   }
-//  depends_on = [time_sleep.wait]
+  depends_on = [time_sleep.wait]
+}
+
+output "ip" {
+  value = google_compute_instance.vm_instance.network_interface[0].access_config[0].nat_ip
 }
 
