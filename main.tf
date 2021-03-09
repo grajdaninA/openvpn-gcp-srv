@@ -15,7 +15,7 @@ resource "google_compute_instance" "vm_instance" {
 
   boot_disk {
     initialize_params {
-      image = var.gcp_machine_image
+      image = var.gcp_os_image
     }
   }
 

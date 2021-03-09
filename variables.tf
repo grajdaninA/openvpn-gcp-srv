@@ -38,7 +38,7 @@ variable "gcp_machine_type" {
   description = "The instances configuration"
 }
 
-variable "gcp_machine_image" {
+variable "gcp_os_image" {
   type = string
   description = "The GCE OS image"
 }
