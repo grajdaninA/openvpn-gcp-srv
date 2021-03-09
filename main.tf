@@ -76,6 +76,17 @@ resource "local_file" "output_inventory" {
   file_permission = var.inv_permissions
 }
 
+resource "local_file" "output_get_ovpn_user" {
+  content     =  templatefile("${var.templates_path}/${var.get_ovpn_user_tpl}",
+    {
+      user   = var.gcp_instance_user
+      ip    = google_compute_instance.vm_instance.network_interface[0].access_config[0].nat_ip
+      ssh_key_own = var.path_to_private_ssh_key
+    }
+  )
+  filename = "${var.path_to_scripts_dir}/${var.output_script_file_name}"
+  file_permission = var.script_permissions
+}
 
 resource "time_sleep" "wait" {
   depends_on = [local_file.output_inventory]

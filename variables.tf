@@ -111,6 +111,12 @@ variable "inv_permissions" {
   default = "0644"
 }
 
+variable "script_permissions" {
+  type = string
+  description = "The script file permissions"
+  default = "0744"
+}
+
 variable "templates_path" {
   type = string
   description = "The path to templates"
@@ -119,20 +125,38 @@ variable "templates_path" {
 
 variable "inventory_tpl" {
   type = string
-  description = "The inventory file name"
+  description = "The inventory template file name"
   default = "inventory.tpl"
+}
+
+variable "get_ovpn_user_tpl" {
+  type = string
+  description = "The bash-script 'get_ovpn_user.sh' template file name"
+  default = "get_ovpn_user.tpl"
 }
 
 variable "output_inv_file_name" {
   type = string
   description = "The output inventory file name"
-  default = "inventory.yaml"
+  default = "inventory.yml"
+}
+
+variable "output_script_file_name" {
+  type = string
+  description = "The output script file name"
+  default = "get_ovpn_user.sh"
 }
 
 variable "path_to_ansible_dir" {
   type = string
   description = "The path to ansible dir"
   default = "ansible"
+}
+
+variable "path_to_scripts_dir" {
+  type = string
+  description = "The path to scripts dir"
+  default = "scripts"
 }
 
 variable "time_sleep" {
