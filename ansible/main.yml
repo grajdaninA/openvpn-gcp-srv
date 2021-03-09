@@ -1,0 +1,43 @@
+---
+- name: Install nginx to servers
+  hosts: all
+  become: yes
+  vars:
+    ubuntu_pkgs:
+      - 'apt-transport-https'
+      - 'ca-certificates'
+      - 'curl'
+      - 'gnupg2'
+      - 'software-properties-common'
+
+    repo_gpg_key_link:
+      - 'https://download.docker.com/linux/debian/gpg'
+  tasks:
+    - name: install dependancies pks
+      apt:
+        name: "{{ ubuntu_pkgs }}"
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: "{{ repo_gpg_key_link }}"
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/debian buster stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: yes
+      notify: "start docker"
+
+  handlers:
+    - name: start docker
+      service:
+        name: "docker"
+        state: "started"

@@ -82,4 +82,34 @@ variable "firewall_rule_source_tags" {
   default = ["proxy"]
 }
 
+variable "inv_permissions" {
+  type = string
+  description = "The inventory file permissions"
+  default = "0644"
+}
+
+variable "templates_path" {
+  type = string
+  description = "The path to templates"
+  default = "templates"
+}
+
+variable "inventory_tpl" {
+  type = string
+  description = "The inventory file name"
+  default = "inventory.tpl"
+}
+
+variable "output_inv_file_name" {
+  type = string
+  description = "The output inventory file name"
+  default = "inventory.yaml"
+}
+
+variable "path_to_ansible_dir" {
+  type = string
+  description = "The path to ansible dir"
+  default = "ansible"
+}
+
 

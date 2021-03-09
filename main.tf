@@ -46,3 +46,17 @@ resource "google_compute_firewall" "vpn" {
   target_tags = [var.tags[1]]
 }
 
+resource "local_file" "output_inventory" {
+  content     =  templatefile("${var.templates_path}/${var.inventory_tpl}",
+    {
+      group = "proxy"
+      host = var.gcp_instance_name
+      user   = var.gcp_instance_user
+      ip    = google_compute_instance.vm_instance.network_interface.access_config.nat_ip
+      ssh_key_own = var.path_to_private_ssh_key
+    }
+  )
+  filename = "${var.path_to_ansible_dir}/${var.output_inv_file_name}"
+  file_permission = var.inv_permissions
+}
+
