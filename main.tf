@@ -52,11 +52,18 @@ resource "local_file" "output_inventory" {
       group = "proxy"
       host = var.gcp_instance_name
       user   = var.gcp_instance_user
-      ip    = google_compute_instance.vm_instance.network_interface.access_config.nat_ip
+      ip    = google_compute_instance.vm_instance.network_interface[0].access_config[0].nat_ip
       ssh_key_own = var.path_to_private_ssh_key
     }
   )
   filename = "${var.path_to_ansible_dir}/${var.output_inv_file_name}"
   file_permission = var.inv_permissions
+}
+
+resource "null_resource" "ansible" {
+  provisioner "local-exec" {
+    command = "ansible-playbook ${var.path_to_ansible_dir}/main.yml -i ${var.path_to_ansible_dir}/${var.output_inv_file_name}"
+  }
+//  depends_on = [time_sleep.wait]
 }
 
