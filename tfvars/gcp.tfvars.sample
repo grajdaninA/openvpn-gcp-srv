@@ -1,0 +1,42 @@
+do_sshpubkey_name = "REBRAIN.SSH.PUB.KEY"
+
+do_image = "ubuntu-18-04-x64"
+
+do_server_type = "s-1vcpu-1gb"
+
+tags = [
+  "devops",
+  "mikalaiashuika_at_gmail_com"
+]
+
+do_token = "your token"
+
+do_server_user = "root"
+
+path_to_private_key = "path to your private key"
+
+ansible_play_path = "../CaC/ansible-01.yaml"
+
+time_sleep = "40s"
+
+devs = {
+  "lbs" = [
+    "lb1",
+  ],
+  "apps" = [
+    "app1",
+    "app2"
+  ],
+}
+
+do_sshpubkey_own = "your ssh public key"
+
+do_droplet_region = "nyc1"
+
+templates_path = "templates"
+
+inventory_tpl  = "inventory.tpl"
+
+output_inv_file_name = "inventory.yaml"
+
+inv_permissions = "0644"
